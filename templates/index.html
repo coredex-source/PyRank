@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Python Compiler</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        .left-pane {
+            width: 40%;
+            background-color: #f0f0f0;
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .right-pane {
+            width: 60%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        #editor { flex-grow: 1; border: 1px solid #ccc; }
+        #output, #input-area {
+            width: 100%;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left side for displaying MySQL data -->
+        <div class="left-pane">
+            <h2>Database Data</h2>
+            <ul>
+                <!-- Loop through the MySQL data and display it here -->
+                {% for row in questions %}
+                    <li>{{ row }}</li>
+                {% endfor %}
+                <ul>
+                    {% for row in hints %}
+                        <li>{{ row }}</li>
+                    {% endfor %}
+                </ul>
+            </ul>
+        </div>
+
+        <!-- Right side for Python compiler -->
+        <div class="right-pane">
+            <h1>Online Python Compiler</h1>
+            <div id="editor"></div>
+            <textarea id="input-area" placeholder="Enter input here..."></textarea>
+            <button onclick="runCode()">Run</button>
+            <pre id="output"></pre>
+        </div>
+    </div>
+    <!-- Fetch a theme and script for the compiler -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+    <script>
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/monokai");
+        editor.session.setMode("ace/mode/python");
+
+        async function runCode() {
+            const code = editor.getValue();  // Get the Python code from the editor.
+            const input = document.getElementById("input-area").value;  // Get input from textarea.
+
+            const response = await fetch("/run", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ code, input }),  // Send the code and input to the server.
+            });
+
+            const result = await response.json();  // Receive the output from the server.
+            document.getElementById("output").textContent = result.output;  // Display output in the page.
+        }
+    </script>
+</body>
+</html>
