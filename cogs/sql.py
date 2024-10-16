@@ -2,6 +2,16 @@ import mysql.connector
 import random
 
 def get_mysql_data(host,user,password,database,table):
+    '''
+    Parameters:
+    - host: SQL hostname
+    - user: SQL username
+    - password: SQL password
+    - database: SQL database name
+    - table: SQL table name
+    Returns:
+    - Fetched data from SQL [Question, hints and expectedOutputs]
+    '''
     try:
         conn = mysql.connector.connect(
             host=host,

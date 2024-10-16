@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 import subprocess
-from cogs import sql
+from cogs import sql, GenerationAlgorithms
 
 app = Flask(__name__)
 
@@ -45,9 +45,7 @@ def run_code():
             main_output = main_output[0]
         except:
             main_output = output
-        print(output)
-        print(main_output)
-        print(expectedOutput)
+        print(GenerationAlgorithms.generate_testcases(expectedOutput, expectedOutput))
         if expectedOutput == main_output or (expectedOutput + "\n\n") == main_output:
             printout = "Correct\n"+output
             return jsonify({
