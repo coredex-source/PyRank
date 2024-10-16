@@ -1,15 +1,22 @@
 from flask import Flask, request, jsonify, render_template
 import subprocess
 from cogs import sql, GenerationAlgorithms
+import json
 
 app = Flask(__name__)
 
+def load_creds():
+    with open('creds.json', 'r') as file:
+        config = json.load(file)
+    return config
+
 expectedOutput = ""
-host="localhost"
-user="root"
-password="123@123"
-database="MAIN"
-table = "main"
+config = load_creds()
+host = config['DB_HOST']
+user = config['DB_USER']
+password = config['DB_PASSWORD']
+database = config['DB_NAME']
+table = config['TB_NAME']
 
 # Connect to the MySQL database and fetch data.
 
