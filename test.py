@@ -25,12 +25,34 @@ cursor = conn.cursor()
 cursor.execute("SELECT code from main where SNo = 2")
 data = cursor.fetchone()
 data = data[0]
+new_data = data.split("\n")
+for i in range(len(new_data)):
+    if "def main" in new_data[i]:
+        new_data = new_data[i]
+        new_data = new_data.rsplit("(")
+        new_data = new_data[1]
+        new_data = new_data.rsplit(")")
+        new_data = new_data[0]
+        return_data = []
+        for i in new_data:
+            if i != "," and i != " ":
+                return_data.append(i)
+        break
+
+demo_testcase = [3,2]
+data_dict = {}
+for i in range(len(return_data)):
+    data_dict[return_data[i]] = demo_testcase[i]
+
+exec_stat = ["python", "-c", data]
+for i in data_dict:
+    exec_stat.append(str(data_dict[i]))
 
 n = 3
 k = 2
 # Running the Python code using subprocess and passing arguments
 result = subprocess.run(
-    ["python", "-c", data, str(n), str(k)],
+    exec_stat,
     text=True,
     capture_output=True,
     timeout=5
