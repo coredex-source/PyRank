@@ -34,6 +34,6 @@ def get_mysql_data(host,user,password,database,table):
         data = cursor.fetchall()
         expectedOutput = data[0][0]
         conn.close()
-        return question, hints, expectedOutput
+        return question, hints, str(expectedOutput)
     except mysql.connector.Error as err:
         return f"Error: {err}"
