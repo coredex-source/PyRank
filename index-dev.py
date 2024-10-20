@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 import subprocess
 from cogs import sql, GenerationAlgorithms
+from cogs.ExtraCogs import convert_value
 import json
 
 app = Flask(__name__)
@@ -9,7 +10,7 @@ def load_creds():
     with open('creds.json', 'r') as file:
         config = json.load(file)
     return config
-
+serial_number = -1
 expectedOutput = ""
 config = load_creds()
 host = config['DB_HOST']
@@ -24,8 +25,9 @@ table = config['TB_NAME']
 # Serve the homepage at the root URL.
 @app.route("/")
 def home():
-    global expectedOutput
-    questions, hints, expectedOutput = sql.get_mysql_data(host,user,password,database,table)
+    global serial_number
+    serial_number, questions, hints = sql.fetch_question__hints(host,user,password,database,table)
+    serial_number = serial_number[0]
     return render_template("index.html", questions = questions, hints = hints)
 
 # Route to execute the Python code.
@@ -52,7 +54,8 @@ def run_code():
             main_output = main_output[0]
         except:
             main_output = output
-        print(GenerationAlgorithms.generate_testcases(expectedOutput, expectedOutput))
+        expectedOutput = sql.fetch_output(host,user,password,database,table,serial_number)
+        print(GenerationAlgorithms.generate_testcases(convert_value(expectedOutput), convert_value(expectedOutput)))
         if expectedOutput == main_output or (expectedOutput + "\n\n") == main_output:
             printout = "Correct\n"+output
             return jsonify({

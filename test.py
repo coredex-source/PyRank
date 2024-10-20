@@ -47,9 +47,7 @@ for i in range(len(return_data)):
 exec_stat = ["python", "-c", data]
 for i in data_dict:
     exec_stat.append(str(data_dict[i]))
-
-n = 3
-k = 2
+    
 # Running the Python code using subprocess and passing arguments
 result = subprocess.run(
     exec_stat,
