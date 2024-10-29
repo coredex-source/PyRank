@@ -5,91 +5,217 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Online Python Compiler</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-        .container {
-            display: flex;
+        /* Color Variables */
+        :root {
+            --primary: #2ecc71;
+            --primary-dark: #27ae60;
+            --accent: #9b59b6;
+            --background: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text: #ecf0f1;
+            --text-secondary: #95a5a6;
+            --error: #e74c3c;
+            --success: #2ecc71;
+        }
+
+        /* General Body and Layout Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            grid-template-rows: auto 1fr;
             height: 100vh;
+            background-color: var(--background);
+            color: var(--text);
         }
-        .left-pane {
-            width: 40%;
-            background-color: #f0f0f0;
-            padding: 20px;
-            overflow-y: auto;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-        }
-        .right-pane {
-            width: 60%;
-            padding: 20px;
+
+        /* Top Navigation Bar */
+        .nav-bar {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: var(--card-bg);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-        #editor { flex-grow: 1; border: 1px solid #ccc; }
-        #output, #input-area {
-            width: 100%;
-            border: 1px solid #ccc;
+        .nav-center {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+        }
+        .nav-center h2 {
+            font-size: 1.5rem;
+            color: var(--text);
+            margin: 0;
+        }
+        .login-button {
+            padding: 10px 20px;
+            color: var(--text);
+            background: var(--primary);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .login-button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Main Content Layout */
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        /* Left Pane (Database) */
+        .left-pane {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            overflow-y: auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .left-pane ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .left-pane li {
+            padding: 10px;
+            background-color: rgba(46, 204, 113, 0.05);
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+        }
+
+        /* Right Pane (Compiler) */
+        .right-pane {
+            display: grid;
+            grid-template-rows: auto 1fr auto auto;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .right-pane h1 {
+            font-size: 1.8rem;
+            color: var(--text);
+        }
+        #editor {
+            height: 40vh;
+            border: 1px solid var(--text-secondary);
             margin-top: 10px;
+            border-radius: 8px;
+        }
+        #input-area {
+            width: 100%;
+            height: 40px;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid var(--text-secondary);
+            border-radius: 8px;
+            resize: none;
+            background: var(--card-bg);
+            color: var(--text);
         }
         button {
+            padding: 12px;
             margin-top: 10px;
-            padding: 10px;
-            background-color: #28a745;
-            color: white;
+            font-size: 1rem;
+            color: var(--text);
+            background-color: var(--primary);
             border: none;
+            border-radius: 8px;
             cursor: pointer;
+            transition: background-color 0.2s ease;
         }
         button:hover {
-            background-color: #218838;
+            background-color: var(--primary-dark);
+        }
+        #output {
+            width: 100%;
+            height: 150px;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: var(--background);
+            border: 1px solid var(--text-secondary);
+            border-radius: 8px;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            color: var(--text);
+            font-family: monospace;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Left side for displaying MySQL data -->
-        <div class="left-pane">
+    <!-- Navigation Bar -->
+    <div class="nav-bar">
+        <!-- Center-aligned "Database Data" text -->
+        <div class="nav-center">
             <h2>Database Data</h2>
+        </div>
+        <a href="/templates/login.html" class="login-button">Login</a>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Left Pane: Database Data -->
+        <div class="left-pane">
             <ul>
-                <!-- Loop through the MySQL data and display it here -->
                 {% for row in questions %}
                     <li>{{ row }}</li>
                 {% endfor %}
-                <ul>
-                    {% for row in hints %}
-                        <li>{{ row }}</li>
-                    {% endfor %}
-                </ul>
+            </ul>
+            <ul>
+                {% for row in hints %}
+                    <li>{{ row }}</li>
+                {% endfor %}
             </ul>
         </div>
 
-        <!-- Right side for Python compiler -->
+        <!-- Right Pane: Python Compiler Interface -->
         <div class="right-pane">
             <h1>Online Python Compiler</h1>
             <div id="editor"></div>
             <textarea id="input-area" placeholder="Enter input here..."></textarea>
-            <button onclick="runCode()">Run</button>
+            <button onclick="runCode()">Run Code</button>
             <pre id="output"></pre>
         </div>
     </div>
-    <!-- Fetch a theme and script for the compiler -->
+
+    <!-- Ace Editor Setup -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
     <script>
+        // Initialize Ace Editor
         var editor = ace.edit("editor");
         editor.setTheme("ace/theme/monokai");
         editor.session.setMode("ace/mode/python");
 
+        // Function to execute Python code
         async function runCode() {
-            const code = editor.getValue();  // Get the Python code from the editor.
-            const input = document.getElementById("input-area").value;  // Get input from textarea.
+            const code = editor.getValue();
+            const input = document.getElementById("input-area").value;
 
-            const response = await fetch("/run", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ code, input }),  // Send the code and input to the server.
-            });
+            // Send code and input to the server
+            try {
+                const response = await fetch("/run", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ code, input }),
+                });
 
-            const result = await response.json();  // Receive the output from the server.
-            document.getElementById("output").textContent = result.output;  // Display output in the page.
+                // Display the output or error message
+                const result = await response.json();
+                document.getElementById("output").textContent = result.output || "Error executing code.";
+            } catch (error) {
+                document.getElementById("output").textContent = "Error: Could not connect to server.";
+            }
         }
     </script>
 </body>
