@@ -18,16 +18,18 @@ user = config['DB_USER']
 password = config['DB_PASSWORD']
 database = config['DB_NAME']
 table = config['TB_NAME']
+user_table = config['USER_TB_NAME']
 
 # Login route
 @app.route("/login", methods=["POST"])
 def login():
-    email = request.form.get("username")
-    password = request.form.get("password")
+    entered_email = request.form.get("username")
+    entered_password = request.form.get("password")
     
-    # Check credentials to be replaced by sql later
-    if email == config.get("EMAIL") and password == config.get("PASSWORD"):
-        session['user'] = email  # Mark the user as logged in
+    user_email, user_name, user_password = sql.fetch_creds(host,user,password,database,user_table,entered_email)
+
+    if (entered_email == user_email or entered_email == user_name) and entered_password == user_password:
+        session['user'] = user_email  # Mark the user as logged in
         return redirect(url_for("home"))
     else:
         # Render the login page with an error message
