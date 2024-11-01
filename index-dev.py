@@ -30,7 +30,9 @@ def login():
         session['user'] = email  # Mark the user as logged in
         return redirect(url_for("home"))
     else:
-        return "Invalid credentials, please try again.", 401
+        # Render the login page with an error message
+        return render_template("login.html", error="Invalid credentials, please try again.")
+
 
 @app.route("/")
 def home():

@@ -15,7 +15,7 @@
             passwordToggle.textContent = '🔒';
         } else {
             passwordInput.type = 'password';
-            passwordToggle.textContent = '👁️';
+            passwordToggle.textContent = '🔓';
         }
     }
     function navigateToSignup() {
@@ -264,6 +264,12 @@
             <h1>Login Now</h1>
             <p>Enter your credentials to continue</p>
         </div>
+        
+        <!-- Display error message if exists -->
+        {% if error %}
+        <p style="color: var(--error); text-align: center; margin-bottom: 1rem;">{{ error }}</p>
+        {% endif %}
+    
         <form action="/login" method="post">
             <div class="form-group" style="--delay: 1">
                 <label for="username">Email</label>
@@ -272,7 +278,7 @@
             <div class="form-group" style="--delay: 2">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" placeholder="Enter your password" required>
-                <span class="password-toggle" onclick="togglePassword()">👁️</span>
+                <span class="password-toggle" onclick="togglePassword()">🔓</span>
             </div>
             <div class="checkbox-wrapper">
                 <input type="checkbox" id="remember" checked>
@@ -283,8 +289,7 @@
         <div class="additional-links">
             <a href="#">Forgot password?</a>
             <a href="javascript:void(0);" onclick="navigateToSignup()">Create account</a>
-            <!--<a href="/templates/signup.html">Create account</a>-->
         </div>
-    </div>
+    </div>    
 </body>
 </html>
