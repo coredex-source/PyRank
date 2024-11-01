@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+</head>
+<style>
+    :root {
+            --primary: #2ecc71;
+            --primary-dark: #27ae60;
+            --accent: #9b59b6;
+            --background: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text: #ecf0f1;
+            --text-secondary: #95a5a6;
+            --error: #e74c3c;
+            --success: #2ecc71;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--background);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(46, 204, 113, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(155, 89, 182, 0.1) 0%, transparent 20%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .signup-container {
+            background: var(--card-bg);
+            padding: 3rem;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 520px;
+            position: relative;
+            overflow: hidden;
+            animation: containerFadeIn 0.8s ease-out;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--text-secondary);
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        .progress-step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 2px solid var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--text-secondary);
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .progress-step.completed {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--text);
+        }
+
+        /* Form Steps */
+        .form-step {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .step-header {
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+
+        .step-header h2 {
+            color: var(--text);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-header p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--text);
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid transparent;
+            color: var(--text);
+            border-radius: 12px;
+            outline: none;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+            background: rgba(46, 204, 113, 0.05);
+        }
+
+        .name-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-next {
+            background: var(--primary);
+            color: var(--text);
+            border: none;
+            flex: 1;
+        }
+
+        .btn-next:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-back {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 2px solid var(--text-secondary);
+            padding: 0.9rem 2rem;
+        }
+
+        .btn-back:hover {
+            border-color: var(--text);
+            color: var(--text);
+        }
+
+        /* Password Strength Indicator */
+        .password-strength {
+            margin-top: 0.5rem;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .strength-bar {
+            height: 100%;
+            width: 0;
+            transition: all 0.3s ease;
+        }
+
+        .weak { width: 33%; background: var(--error); }
+        .medium { width: 66%; background: #f1c40f; }
+        .strong { width: 100%; background: var(--success); }
+
+        /* Success Animation */
+        .success-animation {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .success-animation.active {
+            display: block;
+        }
+
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto 1rem;
+            background: var(--success);
+            position: relative;
+        }
+
+        .checkmark::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(45deg);
+            width: 20px;
+            height: 40px;
+            border: solid white;
+            border-width: 0 4px 4px 0;
+            animation: checkmark 0.3s ease-out forwards;
+        }
+
+        @keyframes checkmark {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) rotate(45deg) scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) rotate(45deg) scale(1);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .signup-container {
+                padding: 2rem;
+            }
+
+            .name-group {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column-reverse;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+</style>
+<body>
+    <div class="signup-container">
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="progress-step active" data-step="1">1</div>
+            <div class="progress-step" data-step="2">2</div>
+            <div class="progress-step" data-step="3">3</div>
+        </div>
+
+        <!-- Step 1: Personal Information -->
+        <div class="form-step active" data-step="1">
+            <div class="step-header">
+                <h2>Personal Information</h2>
+                <p>Please fill in your basic information</p>
+            </div>
+            <form>
+                <div class="name-group">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="btn btn-back" onclick="window.location.href='/templates/login.html'">Login</button>
+                    <button type="button" class="btn btn-next" onclick="nextStep(1)">Continue</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Step 2: Account Security -->
+        <div class="form-step" data-step="2">
+            <div class="step-header">
+                <h2>Create Password</h2>
+                <p>Choose a secure password for your account</p>
+            </div>
+            <form>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" oninput="checkPasswordStrength()" required>
+                    <div class="password-strength">
+                        <div class="strength-bar"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" required>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="btn btn-back" onclick="prevStep(2)">Back</button>
+                    <button type="button" class="btn btn-next" onclick="nextStep(2)">Continue</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Step 3: Preferences -->
+        <div class="form-step" data-step="3">
+            <div class="step-header">
+                <h2>Final Step</h2>
+                <p>Choose your preferences</p>
+            </div>
+            <form>
+                <div class="form-group">
+                    <label for="username">Choose Username</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number (Optional)</label>
+                    <input type="tel" id="phone">
+                </div>
+                <div class="button-group">
+                    <button type="button" class="btn btn-back" onclick="prevStep(3)">Back</button>
+                    <button type="button" class="btn btn-next" onclick="completeSignup()">Complete Signup</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Success Message -->
+        <div class="success-animation">
+            <span class="checkmark"></span>
+            <h2 style="color: var(--text); margin-bottom: 1rem;">Welcome Aboard!</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">Your account has been created successfully</p>
+            <button class="btn btn-next" onclick="window.location.href='/'">Get Started</button>
+        </div>
+    </div>
+
+    <script>
+        function nextStep(currentStep) {
+            const currentForm = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+            const nextForm = document.querySelector(`.form-step[data-step="${currentStep + 1}"]`);
+            const nextProgress = document.querySelector(`.progress-step[data-step="${currentStep + 1}"]`);
+            const currentProgress = document.querySelector(`.progress-step[data-step="${currentStep}"]`);
+
+            currentForm.classList.remove('active');
+            nextForm.classList.add('active');
+            currentProgress.classList.add('completed');
+            nextProgress.classList.add('active');
+        }
+
+        function prevStep(currentStep) {
+            const currentForm = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+            const prevForm = document.querySelector(`.form-step[data-step="${currentStep - 1}"]`);
+            const currentProgress = document.querySelector(`.progress-step[data-step="${currentStep}"]`);
+            const prevProgress = document.querySelector(`.progress-step[data-step="${currentStep - 1}"]`);
+
+            currentForm.classList.remove('active');
+            prevForm.classList.add('active');
+            currentProgress.classList.remove('active');
+            prevProgress.classList.remove('completed');
+        }
+
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const strengthBar = document.querySelector('.strength-bar');
+            
+            // Simple password strength check
+            let strength = 0;
+            if (password.match(/[a-z]/)) strength++;
+            if (password.match(/[A-Z]/)) strength++;
+            if (password.match(/[0-9]/)) strength++;
+            if (password.match(/[^a-zA-Z0-9]/)) strength++;
+            if (password.length >= 8) strength++;
+
+            strengthBar.className = 'strength-bar';
+            if (strength <= 2) strengthBar.classList.add('weak');
+            else if (strength <= 4) strengthBar.classList.add('medium');
+            else strengthBar.classList.add('strong');
+        }
+
+        function completeSignup() {
+            document.querySelectorAll('.form-step').forEach(step => step.style.display = 'none');
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.querySelector('.success-animation').classList.add('active');
+        }
+    </script>
+</body>
+</html>
