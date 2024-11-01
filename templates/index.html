@@ -158,7 +158,7 @@
         <div class="nav-center">
             <h2>Database Data</h2>
         </div>
-        <a href="/templates/login.html" class="login-button">Login</a>
+        <a href="javascript:void(0);" class="login-button" onclick="navigateToLogin()">Login</a>
     </div>
 
     <!-- Main Container -->
@@ -216,6 +216,9 @@
             } catch (error) {
                 document.getElementById("output").textContent = "Error: Could not connect to server.";
             }
+        }
+        function navigateToLogin() {
+            window.location.href = "/show_login";
         }
     </script>
 </body>

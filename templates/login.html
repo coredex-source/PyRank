@@ -18,6 +18,9 @@
             passwordToggle.textContent = '👁️';
         }
     }
+    function navigateToSignup() {
+        window.location.href = "/show_signup";
+    }
 </script>
 <style>
     :root {
@@ -261,14 +264,14 @@
             <h1>Login Now</h1>
             <p>Enter your credentials to continue</p>
         </div>
-        <form>
+        <form action="/login" method="post">
             <div class="form-group" style="--delay: 1">
                 <label for="username">Email</label>
-                <input type="email" id="username" placeholder="name@company.com" required>
+                <input type="email" id="username" name="username" placeholder="name@company.com" required>
             </div>
             <div class="form-group" style="--delay: 2">
                 <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Enter your password" required>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
                 <span class="password-toggle" onclick="togglePassword()">👁️</span>
             </div>
             <div class="checkbox-wrapper">
@@ -276,10 +279,11 @@
                 <label for="remember">Keep me signed in</label>
             </div>
             <button type="submit" class="login-button">Sign in</button>
-        </form>
+        </form>        
         <div class="additional-links">
             <a href="#">Forgot password?</a>
-            <a href="/templates/signup.html">Create account</a>
+            <a href="javascript:void(0);" onclick="navigateToSignup()">Create account</a>
+            <!--<a href="/templates/signup.html">Create account</a>-->
         </div>
     </div>
 </body>

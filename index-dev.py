@@ -1,17 +1,17 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 import subprocess
 from cogs import sql, GenerationAlgorithms
 from cogs.ExtraCogs import convert_value
 import json
 
 app = Flask(__name__)
+app.secret_key = '4f9f1aed-0324-400a-b204-e03ac8c752b5-56d3d24b-b0b4-4635-8482-ee8da0996763-2420a60a-1b81-45c7-82a1-317c96681a9a'
 
 def load_creds():
     with open('creds.json', 'r') as file:
         config = json.load(file)
     return config
-serial_number = -1
-expectedOutput = ""
+
 config = load_creds()
 host = config['DB_HOST']
 user = config['DB_USER']
@@ -19,16 +19,38 @@ password = config['DB_PASSWORD']
 database = config['DB_NAME']
 table = config['TB_NAME']
 
-# Connect to the MySQL database and fetch data.
+# Login route
+@app.route("/login", methods=["POST"])
+def login():
+    email = request.form.get("username")
+    password = request.form.get("password")
+    
+    # Check credentials to be replaced by sql later
+    if email == config.get("EMAIL") and password == config.get("PASSWORD"):
+        session['user'] = email  # Mark the user as logged in
+        return redirect(url_for("home"))
+    else:
+        return "Invalid credentials, please try again.", 401
 
-
-# Serve the homepage at the root URL.
 @app.route("/")
 def home():
+    if 'user' not in session:
+        return redirect(url_for("show_login"))
+    
     global serial_number
-    serial_number, questions, hints = sql.fetch_question__hints(host,user,password,database,table)
+    serial_number, questions, hints = sql.fetch_question__hints(host, user, password, database, table)
     serial_number = serial_number[0]
-    return render_template("index.html", questions = questions, hints = hints)
+    return render_template("index.html", questions=questions, hints=hints)
+
+# Display login page
+@app.route("/show_login")
+def show_login():
+    return render_template("login.html")
+
+# Display signup page
+@app.route("/show_signup")
+def show_signup():
+    return render_template("signup.html")
 
 # Route to execute the Python code.
 @app.route("/run", methods=["POST"])
