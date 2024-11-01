@@ -6,10 +6,10 @@
 ### Note - No commits will be pushed without review.
 
 # To-Do Tasks List:
-- Add various pages to the web interface and IP bound the responses. (Front-end, Python)
+- Add various pages to the web interface and IP bound the responses. (Front-end, Python) [In-Progress]
 - Make users be able to submit code. (Front-end, Python)
-- Add more values to the database. (MySQL)
-- Create and manage user-data including IPs. (MySQL, Python)
+- Add more values to the database. (MySQL) [In-Progress]
+- Create and manage user-data including IPs. (MySQL, Python) [In-Progress]
 - Make signup page functional. (Front-end, Python)
 - Add forgot password page. (Front-end, Python)
 - Remove input field. (Front-end, Python)
