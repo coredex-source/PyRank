@@ -15,248 +15,317 @@
             passwordToggle.textContent = '🔒';
         } else {
             passwordInput.type = 'password';
-            passwordToggle.textContent = '🔓';
+            passwordToggle.textContent = '👁️';
         }
     }
-    function navigateToSignup() {
-        window.location.href = "/show_signup";
+
+    async function handleLogin(event) {
+        event.preventDefault();
+        const email = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // Simulate API call to validate credentials
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Store email for OTP screen
+        sessionStorage.setItem('userEmail', email);
+        
+        // Switch to OTP screen
+        document.querySelector('.login-container').classList.add('slide-out');
+        setTimeout(() => {
+            document.querySelector('.login-container').style.display = 'none';
+            document.querySelector('.otp-container').style.display = 'block';
+            setTimeout(() => {
+                document.querySelector('.otp-container').classList.add('slide-in');
+            }, 50);
+        }, 300);
+    }
+
+    async function handleOTPVerification(event) {
+        event.preventDefault();
+        const otp = document.getElementById('otp').value;
+        
+        if (otp.length === 6 && /^\d+$/.test(otp)) {
+            // Simulate OTP verification
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            alert('Login successful!'); // Replace with your redirect logic
+        } else {
+            alert('Please enter a valid 6-digit OTP');
+        }
+    }
+
+    function resendOTP() {
+        // Simulate resending OTP
+        alert('New OTP sent!');
+    }
+
+    function goBackToLogin() {
+        document.querySelector('.otp-container').classList.remove('slide-in');
+        document.querySelector('.otp-container').style.display = 'none';
+        document.querySelector('.login-container').style.display = 'block';
+        setTimeout(() => {
+            document.querySelector('.login-container').classList.remove('slide-out');
+        }, 50);
     }
 </script>
 <style>
     :root {
-            --primary: #2ecc71;
-            --primary-dark: #27ae60;
-            --accent: #9b59b6;
-            --background: #1a1a1a;
-            --card-bg: #2d2d2d;
-            --text: #ecf0f1;
-            --text-secondary: #95a5a6;
-            --error: #e74c3c;
-            --success: #2ecc71;
-        }
+        --primary: #2ecc71;
+        --primary-dark: #27ae60;
+        --accent: #9b59b6;
+        --background: #1a1a1a;
+        --card-bg: #2d2d2d;
+        --text: #ecf0f1;
+        --text-secondary: #95a5a6;
+        --error: #e74c3c;
+        --success: #2ecc71;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
 
-        body {
-            min-height: 100vh;
-            background: var(--background);
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(46, 204, 113, 0.1) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(155, 89, 182, 0.1) 0%, transparent 20%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+    body {
+        min-height: 100vh;
+        background: var(--background);
+        background-image: 
+            radial-gradient(circle at 10% 20%, rgba(46, 204, 113, 0.1) 0%, transparent 20%),
+            radial-gradient(circle at 90% 80%, rgba(155, 89, 182, 0.1) 0%, transparent 20%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
 
-        .login-container {
-            background: var(--card-bg);
-            padding: 3rem;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 420px;
-            position: relative;
-            overflow: hidden;
-            animation: containerFadeIn 0.8s ease-out;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
+    .login-container, .otp-container {
+        background: var(--card-bg);
+        padding: 3rem;
+        border-radius: 20px;
+        width: 100%;
+        max-width: 420px;
+        position: relative;
+        overflow: hidden;
+        animation: containerFadeIn 0.8s ease-out;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease-out;
+    }
 
-        @keyframes containerFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    .otp-container {
+        display: none;
+        transform: translateX(100%);
+    }
 
-        .login-header {
-            text-align: left;
-            margin-bottom: 2.5rem;
-            animation: fadeInUp 0.6s ease-out 0.3s both;
+    .slide-out {
+        transform: translateX(-100%);
+    }
+
+    .slide-in {
+        transform: translateX(0);
+    }
+
+    @keyframes containerFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .login-header {
+        text-align: left;
+        margin-bottom: 2.5rem;
+        animation: fadeInUp 0.6s ease-out 0.3s both;
+    }
+
+    .login-header h1 {
+        color: var(--text);
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    .login-header p {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.8rem;
+        position: relative;
+        animation: fadeInUp 0.6s ease-out calc(var(--delay) * 0.2s) both;
+    }
+
+    .form-group label {
+        display: block;
+        color: var(--text);
+        margin-bottom: 0.8rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .form-group input:not([type="checkbox"]) {
+        width: 100%;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px solid transparent;
+        color: var(--text);
+        border-radius: 12px;
+        outline: none;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+    }
+
+    .form-group input:focus {
+        border-color: var(--primary);
+        background: rgba(46, 204, 113, 0.05);
+    }
+
+    .checkbox-wrapper {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.8rem;
+        animation: fadeInUp 0.6s ease-out 0.8s both;
+    }
+
+    .checkbox-wrapper input[type="checkbox"] {
+        display: none;
+    }
+
+    .checkbox-wrapper label {
+        position: relative;
+        padding-left: 35px;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .checkbox-wrapper label:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 22px;
+        height: 22px;
+        border: 2px solid var(--primary);
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        background: rgba(46, 204, 113, 0.05);
+    }
+
+    .checkbox-wrapper input[type="checkbox"]:checked + label:before {
+        background: var(--primary);
+    }
+
+    .checkbox-wrapper label:after {
+        content: '✓';
+        position: absolute;
+        left: 7px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text);
+        font-size: 14px;
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+
+    .checkbox-wrapper input[type="checkbox"]:checked + label:after {
+        opacity: 1;
+    }
+
+    .login-button {
+        width: 100%;
+        padding: 1rem;
+        background: var(--primary);
+        color: var(--text);
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        animation: fadeInUp 0.6s ease-out 1s both;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .login-button:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+    }
+
+    .login-button:active {
+        transform: translateY(1px);
+    }
+
+    .additional-links {
+        margin-top: 2rem;
+        text-align: center;
+        animation: fadeInUp 0.6s ease-out 1.2s both;
+        font-size: 0.9rem;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .additional-links a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .additional-links a:hover {
+        color: var(--primary);
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 1rem;
+        top: 65%;
+        transform: translateY(-50%);
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .password-toggle:hover {
+        color: var(--primary);
+    }
+
+    @media (max-width: 480px) {
+        .login-container, .otp-container {
+            padding: 2rem;
+            border-radius: 16px;
         }
 
         .login-header h1 {
-            color: var(--text);
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
+            font-size: 1.75rem;
         }
+    }
 
-        .login-header p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.8rem;
-            position: relative;
-            animation: fadeInUp 0.6s ease-out calc(var(--delay) * 0.2s) both;
-        }
-
-        .form-group label {
-            display: block;
-            color: var(--text);
-            margin-bottom: 0.8rem;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .form-group input:not([type="checkbox"]) {
-            width: 100%;
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid transparent;
-            color: var(--text);
-            border-radius: 12px;
-            outline: none;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-        }
-
-        .form-group input:focus {
-            border-color: var(--primary);
-            background: rgba(46, 204, 113, 0.05);
-        }
-
-        /* Custom Checkbox Style */
-        .checkbox-wrapper {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1.8rem;
-            animation: fadeInUp 0.6s ease-out 0.8s both;
-        }
-
-        .checkbox-wrapper input[type="checkbox"] {
-            display: none;
-        }
-
-        .checkbox-wrapper label {
-            position: relative;
-            padding-left: 35px;
-            cursor: pointer;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .checkbox-wrapper label:before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 22px;
-            height: 22px;
-            border: 2px solid var(--primary);
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            background: rgba(46, 204, 113, 0.05);
-        }
-
-        .checkbox-wrapper input[type="checkbox"]:checked + label:before {
-            background: var(--primary);
-        }
-
-        .checkbox-wrapper label:after {
-            content: '✓';
-            position: absolute;
-            left: 7px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text);
-            font-size: 14px;
+    @keyframes fadeInUp {
+        from {
             opacity: 0;
-            transition: all 0.3s ease;
+            transform: translateY(20px);
         }
-
-        .checkbox-wrapper input[type="checkbox"]:checked + label:after {
+        to {
             opacity: 1;
+            transform: translateY(0);
         }
-
-        .login-button {
-            width: 100%;
-            padding: 1rem;
-            background: var(--primary);
-            color: var(--text);
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            animation: fadeInUp 0.6s ease-out 1s both;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .login-button:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        .login-button:active {
-            transform: translateY(1px);
-        }
-
-        .additional-links {
-            margin-top: 2rem;
-            text-align: center;
-            animation: fadeInUp 0.6s ease-out 1.2s both;
-            font-size: 0.9rem;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .additional-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .additional-links a:hover {
-            color: var(--primary);
-        }
-
-        @media (max-width: 480px) {
-            .login-container {
-                padding: 2rem;
-                border-radius: 16px;
-            }
-
-            .login-header h1 {
-                font-size: 1.75rem;
-            }
-        }
-
-        /* Password visibility toggle */
-        .password-toggle {
-            position: absolute;
-            right: 1rem;
-            top: 65%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .password-toggle:hover {
-            color: var(--primary);
-        }
+    }
 </style>
 <body>
     <div class="login-container">
@@ -264,32 +333,50 @@
             <h1>Login Now</h1>
             <p>Enter your credentials to continue</p>
         </div>
-        
-        <!-- Display error message if exists -->
-        {% if error %}
-        <p style="color: var(--error); text-align: center; margin-bottom: 1rem;">{{ error }}</p>
-        {% endif %}
-    
-        <form action="/login" method="post">
+        <form onsubmit="handleLogin(event)">
             <div class="form-group" style="--delay: 1">
                 <label for="username">Email</label>
-                <input type="email" id="username" name="username" placeholder="name@company.com" required>
+                <input type="email" id="username" placeholder="name@company.com" required>
             </div>
             <div class="form-group" style="--delay: 2">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
-                <span class="password-toggle" onclick="togglePassword()">🔓</span>
+                <input type="password" id="password" placeholder="Enter your password" required>
+                <span class="password-toggle" onclick="togglePassword()">👁️</span>
             </div>
             <div class="checkbox-wrapper">
                 <input type="checkbox" id="remember" checked>
                 <label for="remember">Keep me signed in</label>
             </div>
             <button type="submit" class="login-button">Sign in</button>
-        </form>        
+        </form>
         <div class="additional-links">
             <a href="#">Forgot password?</a>
-            <a href="javascript:void(0);" onclick="navigateToSignup()">Create account</a>
+            <a href="/templates/signup.html">Create account</a>
         </div>
-    </div>    
+    </div>
+
+    <div class="otp-container">
+        <div class="login-header">
+            <h1>Verify OTP</h1>
+            <p>Enter the code sent to your email</p>
+        </div>
+        <form onsubmit="handleOTPVerification(event)">
+            <div class="form-group" style="--delay: 1">
+                <label for="otp">Enter OTP</label>
+                <input type="text" 
+                       id="otp" 
+                       placeholder="Enter 6-digit OTP" 
+                       maxlength="6" 
+                       pattern="[0-9]*" 
+                       inputmode="numeric"
+                       required>
+            </div>
+            <button type="submit" class="login-button">Verify OTP</button>
+        </form>
+        <div class="additional-links">
+            <a href="#" onclick="resendOTP()">Resend OTP</a>
+            <a href="#" onclick="goBackToLogin()">Back to Login</a>
+        </div>
+    </div>
 </body>
 </html>
