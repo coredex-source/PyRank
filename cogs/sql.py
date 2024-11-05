@@ -93,10 +93,7 @@ def fetch_code(host,user,password,database,table,serial_number):
                 new_data = new_data[1]
                 new_data = new_data.rsplit(")")
                 new_data = new_data[0]
-                return_data = []
-                for i in new_data:
-                    if i != "," and i != " ":
-                        return_data.append(i)
+                return_data = [word.strip() for word in new_data.split(",")]
                 return data, return_data
     except mysql.connector.Error as err:
         return f"Error: {err}"

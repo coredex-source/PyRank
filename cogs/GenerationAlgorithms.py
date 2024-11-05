@@ -48,12 +48,14 @@ def generate_expectedOutputs(array_tc,data,return_data):
     for testcase in array_tc:
         data_dict = {}
         for i in range(len(return_data)):
-            data_dict[return_data[i]] = testcase[i]
+            if len(return_data) == len(testcase):
+                data_dict[return_data[i]] = testcase[i]
+            else:
+                data_dict[return_data[i]] = testcase
 
         exec_stat = ["python", "-c", data]
         for i in data_dict:
             exec_stat.append(str(data_dict[i]))
-            
         # Running the Python code using subprocess and passing arguments
         result = subprocess.run(
             exec_stat,
