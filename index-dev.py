@@ -44,7 +44,9 @@ def home():
     global serial_number
     serial_number, questions, hints = sql.fetch_question__hints(host, user, password, database, table)
     serial_number = serial_number[0]
-    return render_template("index.html", questions=questions, hints=hints)
+
+    default_code = """# Your default Python code goes here\nprint('Hello, World!')"""
+    return render_template("index.html", questions=questions, hints=hints, default_code=default_code)
 
 # Display login page
 @app.route("/show_login")
@@ -59,6 +61,47 @@ def show_signup():
 # Route to execute the Python code.
 @app.route("/run", methods=["POST"])
 def run_code():
+    try:
+        # Receive the JSON payload from the frontend.
+        data = request.get_json()
+        code = "import tracemalloc\nimport time\ntracemalloc.start()\nbegin_time = time.time()\n"+data['code']+"\nend_time = time.time()\ntotal_time = end_time - begin_time\ncurrent, peak = tracemalloc.get_traced_memory()\ntracemalloc.stop()\nprint('')\nprint('Memory Usage:',peak/1024,'KB |','Execution time:',total_time)"
+        user_input = data.get('input', '')
+
+        # Use subprocess to run the code in a safe environment and provide input.
+        result = subprocess.run(
+            ["python", "-c", code],
+            input=user_input,
+            text=True,
+            capture_output=True,
+            timeout=5
+        )
+        # Return either the result or any errors.
+        output = result.stdout or result.stderr
+        try:
+            main_output = output.rsplit("Memory",1)
+            main_output = main_output[0]
+        except:
+            main_output = output
+        expectedOutput = sql.fetch_output(host,user,password,database,table,serial_number)
+        print(GenerationAlgorithms.generate_testcases(convert_value(expectedOutput), convert_value(expectedOutput)))
+        if expectedOutput == main_output or (expectedOutput + "\n\n") == main_output:
+            printout = "Correct\n"+output
+            return jsonify({
+                "output": printout
+            })
+        else:
+            printout = "Expected Output:"+ expectedOutput+ "\nYour Output:"+ output
+            return jsonify({
+                "output": printout
+            })
+    except subprocess.TimeoutExpired:
+        return jsonify({"output": "Error: Code execution timed out"})
+    except Exception as e:
+        return jsonify({"output": str(e)})
+
+# Route to submit and execute the Python code.
+@app.route("/submit", methods=["POST"])
+def submit_code():
     try:
         # Receive the JSON payload from the frontend.
         data = request.get_json()

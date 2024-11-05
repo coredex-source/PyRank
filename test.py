@@ -18,8 +18,7 @@ print(data)
 print("")
 print(return_data)
 
-'''t1 = "[3,2]"
-t2 = "[1,3]"'''
+'''t1 = t2 = "[3,2]"'''
 
 t1 = t2 = "[0,-1,-5,-2,3,14]"
 array_tc = GenerationAlgorithms.generate_tc_a_pairs(ExtraCogs.convert_value(t1),ExtraCogs.convert_value(t2),10)
